@@ -1,0 +1,12 @@
+:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #f5f7fb; background: #10151f; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 20% 0%, #20314c, #10151f 48%); }
+.shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 64px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0 48px; }
+h1, h2, p { margin-top: 0; } h1 { margin-bottom: 0; font-size: clamp(1.7rem, 4vw, 2.7rem); letter-spacing: -0.04em; } h2 { font-size: clamp(1.6rem, 4vw, 3rem); line-height: 1.05; max-width: 650px; margin-bottom: 18px; }
+.eyebrow { color: #73d4c2; font-size: .75rem; font-weight: 800; letter-spacing: .16em; margin-bottom: 10px; }
+.status { border: 1px solid #3e7b75; border-radius: 999px; color: #9be9da; font-size: .8rem; padding: 8px 12px; white-space: nowrap; }
+.card { background: rgba(22, 31, 46, .86); border: 1px solid #2d3d56; border-radius: 20px; box-shadow: 0 24px 70px rgba(0,0,0,.2); }
+.welcome { padding: clamp(28px, 7vw, 72px); } .welcome > p:not(.eyebrow):not(.note) { color: #c2ccdb; font-size: 1.08rem; line-height: 1.65; max-width: 650px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 30px 0 18px; } button { border: 0; border-radius: 10px; background: #73d4c2; color: #0d1b1d; cursor: not-allowed; font: inherit; font-weight: 800; padding: 13px 18px; } button.secondary { background: transparent; border: 1px solid #50627b; color: #d8e2f0; }
+.note { color: #8797ad; font-size: .9rem; margin-bottom: 0; }
