@@ -7,7 +7,7 @@ const id = (prefix) => `${prefix}-${crypto.randomUUID()}`;
 export function createNewGame(displayName = 'New Realtor') {
   return {
     version: 1,
-    player: { id: id('player'), displayName, trust: SIMULATION_CONFIG.startingTrust, reputation: SIMULATION_CONFIG.startingReputation, gameHours: 0 },
+    player: { id: id('player'), displayName, trust: SIMULATION_CONFIG.startingTrust, reputation: SIMULATION_CONFIG.startingReputation, gameHours: 0, brokerageContract: { playerShare: SIMULATION_CONFIG.commission.defaultPlayerShare, negotiated: false } },
     opportunity: { id: id('opportunity'), status: 'Discovered', source: 'Starter Scenario', type: 'Residential', convertedLeadId: null },
     lead: null,
     client: null,
