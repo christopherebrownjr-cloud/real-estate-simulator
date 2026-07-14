@@ -7,6 +7,16 @@ h1, h2, p { margin-top: 0; } h1 { margin-bottom: 0; font-size: clamp(1.7rem, 4vw
 .eyebrow { color: #73d4c2; font-size: .75rem; font-weight: 800; letter-spacing: .16em; margin-bottom: 10px; }
 .status { border: 1px solid #3e7b75; border-radius: 999px; color: #9be9da; font-size: .8rem; padding: 8px 12px; white-space: nowrap; }
 .card { background: rgba(22, 31, 46, .86); border: 1px solid #2d3d56; border-radius: 20px; box-shadow: 0 24px 70px rgba(0,0,0,.2); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.grid .card { padding: 24px; min-height: 180px; }
+.hero { grid-column: 1 / -1; }
+h3 { font-size: 1.25rem; margin: 0 0 10px; }
+.metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.metrics span { background: #1c293d; border-radius: 12px; color: #aebbd0; padding: 12px 16px; }
+.metrics b { color: #f5f7fb; display: block; font-size: 1.45rem; }
+.feedback { align-items: center; display: flex; justify-content: space-between; margin-top: 18px; padding: 18px 24px; }
+.feedback .actions { margin: 0; }
 .welcome { padding: clamp(28px, 7vw, 72px); } .welcome > p:not(.eyebrow):not(.note) { color: #c2ccdb; font-size: 1.08rem; line-height: 1.65; max-width: 650px; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 30px 0 18px; } button { border: 0; border-radius: 10px; background: #73d4c2; color: #0d1b1d; cursor: not-allowed; font: inherit; font-weight: 800; padding: 13px 18px; } button.secondary { background: transparent; border: 1px solid #50627b; color: #d8e2f0; }
 .note { color: #8797ad; font-size: .9rem; margin-bottom: 0; }
+@media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .feedback { align-items: flex-start; flex-direction: column; gap: 12px; } }
