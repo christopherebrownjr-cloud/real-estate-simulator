@@ -1,5 +1,5 @@
 import './styles.css';
-import { completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, activateDeal, loadGame, qualifyOpportunity, saveGame } from './core/simulation.js';
+import { completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, activateDeal, loadGame, negotiateBrokerage, qualifyOpportunity, saveGame } from './core/simulation.js';
 
 let state = loadGame() ?? createNewGame();
 let message = 'Starter opportunity ready.';
@@ -15,7 +15,7 @@ function render() {
         <article class="card hero"><p class="eyebrow">CAREER DASHBOARD</p><h2>${state.player.displayName}</h2><p class="note">Starter scenario · ${hours()} elapsed</p><div class="metrics"><span><b>${state.player.trust}</b>Trust</span><span><b>${state.player.reputation}</b>Reputation</span><span><b>${state.lead?.score ?? '—'}</b>Lead score</span></div></article>
         <article class="card"><p class="eyebrow">OPPORTUNITY</p><h3>${state.opportunity.type} lead</h3><p>Status: <strong>${state.opportunity.status}</strong></p><div class="actions">${state.opportunity.status === 'Discovered' ? action('Qualify opportunity', 'qualify') : ''}${state.opportunity.status === 'Qualified' ? action('Win opportunity', 'convert') : ''}</div></article>
         <article class="card"><p class="eyebrow">CRM PROGRESSION</p><h3>${state.lead ? `Lead · ${state.lead.status}` : 'No lead yet'}</h3><div class="actions">${state.lead?.status === 'New' ? action('Complete contact', 'contact') : ''}${state.lead?.status === 'Connected' ? action('Complete appointment', 'appointment') : ''}${state.lead?.status === 'Appointment Scheduled' ? action('Convert to client', 'client') : ''}</div></article>
-        <article class="card"><p class="eyebrow">DEAL WORKSPACE</p><h3>${state.deal ? `Deal · ${state.deal.status}` : 'No deal yet'}</h3><div class="actions">${state.client && !state.deal ? action('Create deal', 'deal') : ''}${state.deal?.status === 'Draft' ? action('Activate deal', 'activate') : ''}</div><p class="note">Closing and commission posting will activate after financial rules are approved.</p></article>
+        <article class="card"><p class="eyebrow">DEAL WORKSPACE</p><h3>${state.deal ? `Deal · ${state.deal.status}` : 'No deal yet'}</h3><p>Brokerage share: <strong>${Math.round(state.player.brokerageContract.playerShare * 100)}% player</strong></p><div class="actions">${state.client && !state.deal ? action('Create deal', 'deal') : ''}${state.deal?.status === 'Draft' ? action('Activate deal', 'activate') : ''}${!state.player.brokerageContract.negotiated ? action('Negotiate contract', 'negotiate') : ''}</div><p class="note">Closing and commission posting will activate after the remaining financial rules are approved.</p></article>
       </section>
       <section class="card feedback" role="status"><strong>${message}</strong><div class="actions">${action('Save game', 'save')} ${action('Load game', 'load')}</div></section>
     </section>`;
@@ -27,6 +27,7 @@ function run(name) {
     const operations = { qualify: qualifyOpportunity, convert: convertOpportunity, contact: completeContact, appointment: completeAppointment, client: convertToClient, deal: createDeal, activate: activateDeal };
     if (name === 'save') { saveGame(state); message = 'Game saved locally in this browser.'; }
     else if (name === 'load') { state = loadGame() ?? state; message = 'Saved game loaded.'; }
+    else if (name === 'negotiate') { const requested = window.prompt('Choose your player share (50-90):', String(Math.round(state.player.brokerageContract.playerShare * 100))); state = negotiateBrokerage(state, Number(requested) / 100); message = 'Brokerage contract negotiated.'; }
     else { state = operations[name](state); message = `${name} completed successfully.`; }
   } catch (error) { message = error.message; }
   render();

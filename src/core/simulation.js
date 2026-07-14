@@ -60,6 +60,13 @@ export function activateDeal(state) {
   return { ...state, deal: { ...state.deal, status: 'Active' } };
 }
 
+export function negotiateBrokerage(state, requestedShare) {
+  if (state.player.brokerageContract.negotiated) throw new Error('The brokerage contract has already been negotiated.');
+  const share = Number(requestedShare);
+  if (!Number.isFinite(share) || share < SIMULATION_CONFIG.commission.minPlayerShare || share > SIMULATION_CONFIG.commission.maxPlayerShare) throw new Error('Choose a player share between 50% and 90%.');
+  return { ...state, player: { ...state.player, brokerageContract: { playerShare: share, negotiated: true } } };
+}
+
 export function saveGame(state) { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); return state; }
 export function loadGame() { const raw = localStorage.getItem(SAVE_KEY); return raw ? JSON.parse(raw) : null; }
 export function getSaveKey() { return SAVE_KEY; }
