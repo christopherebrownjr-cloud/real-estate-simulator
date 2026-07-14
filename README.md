@@ -20,6 +20,8 @@ The app is designed for static deployment to GitHub Pages. The production build 
 - [Milestone 0 backlog](docs/MILESTONE_0_BACKLOG.md)
 - [Source-of-truth policy](docs/SOURCE_OF_TRUTH_POLICY.md)
 - [Subagent operating model](docs/SUBAGENT_OPERATING_MODEL.md)
+- [Subagent package](docs/SUBAGENT_PACKAGE.md)
+- [Screen and navigation plan](docs/SCREEN_NAVIGATION_PLAN.md)
 - [Open product questions](docs/OPEN_PRODUCT_QUESTIONS.md)
 
 No gameplay rule is considered final until it is recorded in an approved source document.
