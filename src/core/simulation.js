@@ -12,6 +12,7 @@ export function createNewGame(displayName = 'New Realtor') {
     lead: null,
     client: null,
     deal: null,
+    ledger: [],
     activities: [],
     notifications: [{ id: id('notification'), message: 'A new opportunity is waiting.', read: false }],
   };
@@ -52,12 +53,28 @@ export function convertToClient(state) {
 
 export function createDeal(state) {
   if (!state.client || state.client.status !== 'Active') throw new Error('An active client is required before creating a deal.');
-  return { ...state, deal: { id: id('deal'), status: 'Draft', clientId: state.client.id } };
+  return { ...state, deal: { id: id('deal'), status: 'Draft', clientId: state.client.id, purchasePrice: 400000, commissionRate: SIMULATION_CONFIG.commission.defaultRate, playerShare: state.player.brokerageContract.playerShare } };
 }
 
 export function activateDeal(state) {
   if (!state.deal || state.deal.status !== 'Draft') throw new Error('Only draft deals can be activated.');
   return { ...state, deal: { ...state.deal, status: 'Active' } };
+}
+
+export function enterEscrow(state) {
+  if (!state.deal || state.deal.status !== 'Active') throw new Error('Only active deals can enter escrow.');
+  return { ...state, deal: { ...state.deal, status: 'Escrow' } };
+}
+
+export function closeDeal(state) {
+  if (!state.deal || state.deal.status !== 'Escrow') throw new Error('Only escrow deals can close.');
+  const gross = Math.round(state.deal.purchasePrice * state.deal.commissionRate * 100) / 100;
+  const playerNet = Math.round(gross * state.deal.playerShare * 100) / 100;
+  const brokerageShare = Math.round((gross - playerNet) * 100) / 100;
+  const key = `commission:${state.deal.id}:close`;
+  if (state.ledger.some((entry) => entry.idempotencyKey === key)) throw new Error('Commission has already been posted for this deal.');
+  const transaction = { id: id('transaction'), type: 'CommissionPosted', amount: playerNet, currency: SIMULATION_CONFIG.commission.currency, grossCommission: gross, brokerageShare, effectiveAtGameHours: state.player.gameHours, relatedDealId: state.deal.id, idempotencyKey: key, description: 'Player commission posted at successful close.' };
+  return { ...state, deal: { ...state.deal, status: 'Closed' }, client: { ...state.client, status: 'Past Client' }, player: { ...state.player, cashBalance: (state.player.cashBalance ?? 0) + playerNet, lifetimeEarnings: (state.player.lifetimeEarnings ?? 0) + playerNet, reputation: Math.min(100, state.player.reputation + SIMULATION_CONFIG.reputation.closedTransaction), trust: Math.min(100, state.player.trust + 10) }, ledger: [...state.ledger, transaction], notifications: [...state.notifications, { id: id('notification'), message: `Deal closed. ${SIMULATION_CONFIG.commission.currency} ${playerNet.toFixed(2)} commission posted.`, read: false }] };
 }
 
 export function negotiateBrokerage(state, requestedShare) {

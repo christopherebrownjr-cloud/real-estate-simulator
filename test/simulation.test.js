@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activateDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, negotiateBrokerage, qualifyOpportunity } from '../src/core/simulation.js';
+import { activateDeal, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, enterEscrow, negotiateBrokerage, qualifyOpportunity } from '../src/core/simulation.js';
 
 function playableState() {
   let state = createNewGame('Test Realtor');
@@ -31,4 +31,16 @@ test('brokerage contract can be negotiated once within range', () => {
   assert.equal(state.player.brokerageContract.playerShare, 0.85);
   assert.equal(state.player.brokerageContract.negotiated, true);
   assert.throws(() => negotiateBrokerage(state, 0.80), /already been negotiated/);
+});
+
+test('closing an escrow deal posts commission exactly once', () => {
+  const active = activateDeal(createDeal(playableState()));
+  const closed = closeDeal(enterEscrow(active));
+  assert.equal(closed.deal.status, 'Closed');
+  assert.equal(closed.client.status, 'Past Client');
+  assert.equal(closed.ledger.length, 1);
+  assert.equal(closed.ledger[0].amount, 8400);
+  assert.equal(closed.player.cashBalance, 8400);
+  assert.equal(closed.player.reputation, 53);
+  assert.throws(() => closeDeal(closed), /Only escrow deals/);
 });
