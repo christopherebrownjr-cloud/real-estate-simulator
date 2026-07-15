@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activateDeal, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, enterEscrow, negotiateBrokerage, qualifyOpportunity } from '../src/core/simulation.js';
+import { activateDeal, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, serializeSave } from '../src/core/simulation.js';
 
 function playableState() {
   let state = createNewGame('Test Realtor');
@@ -43,4 +43,11 @@ test('closing an escrow deal posts commission exactly once', () => {
   assert.equal(closed.player.cashBalance, 8400);
   assert.equal(closed.player.reputation, 53);
   assert.throws(() => closeDeal(closed), /Only escrow deals/);
+});
+
+test('save serialization detects tampering', () => {
+  const serialized = serializeSave(createNewGame('Save Tester'));
+  const envelope = JSON.parse(serialized);
+  envelope.payload = envelope.payload.replace('Save Tester', 'Changed Name');
+  assert.throws(() => deserializeSave(JSON.stringify(envelope)), /integrity validation/);
 });

@@ -84,6 +84,9 @@ export function negotiateBrokerage(state, requestedShare) {
   return { ...state, player: { ...state.player, brokerageContract: { playerShare: share, negotiated: true } } };
 }
 
-export function saveGame(state) { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); return state; }
-export function loadGame() { const raw = localStorage.getItem(SAVE_KEY); return raw ? JSON.parse(raw) : null; }
+function checksum(value) { let hash = 2166136261; for (const char of value) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); } return (hash >>> 0).toString(16); }
+export function serializeSave(state) { const payload = JSON.stringify({ schemaVersion: 1, state }); return JSON.stringify({ schemaVersion: 1, payload, checksum: checksum(payload) }); }
+export function deserializeSave(serialized) { const envelope = JSON.parse(serialized); if (!envelope?.payload || envelope.checksum !== checksum(envelope.payload)) throw new Error('Save data failed integrity validation.'); const parsed = JSON.parse(envelope.payload); if (parsed.schemaVersion !== 1) throw new Error('Save version is not supported.'); return parsed.state; }
+export function saveGame(state) { localStorage.setItem(SAVE_KEY, serializeSave(state)); return state; }
+export function loadGame() { const raw = localStorage.getItem(SAVE_KEY); if (!raw) return null; try { return deserializeSave(raw); } catch { localStorage.removeItem(SAVE_KEY); return null; } }
 export function getSaveKey() { return SAVE_KEY; }
