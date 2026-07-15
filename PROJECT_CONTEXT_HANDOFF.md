@@ -113,6 +113,10 @@ The isolated Claude prototype must not be copied directly into the application. 
 - Live CSS asset: HTTP 200.
 - Remaining release gate: manual browser smoke test, screen-reader review, and mobile visual review.
 
+## Product direction update
+
+`GAMEPLAY_UX_BUILD_PLAN.md` is adopted as the broader product roadmap, not as an immediate scope expansion. The focused current slice is documented in `docs/FIRST_PLAYABLE_UX_REVISION.md`: career command center, guided first-day flow, human-readable starter lead context, recommended actions, and visible consequences using existing approved fields.
+
 ## Approval protocol
 
 - Technical refactors and tests may proceed with normal review.
