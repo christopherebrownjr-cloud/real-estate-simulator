@@ -34,9 +34,9 @@ export function convertOpportunity(state) {
   return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead };
 }
 
-export function completeContact(state) {
+export function completeContact(state, method = 'Phone') {
   if (!state.lead || !['New', 'Attempting Contact'].includes(state.lead.status)) throw new Error('The lead is not ready for contact.');
-  const next = record(state, 'LeadContactCompleted', 'Successful contact completed.', SIMULATION_CONFIG.timeCosts.contact);
+  const next = record(state, 'LeadContactCompleted', `Successful ${method.toLowerCase()} contact completed.`, SIMULATION_CONFIG.timeCosts.contact);
   return { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.successfulContact) }, lead: { ...next.lead, status: 'Connected', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.successfulContact), score: 20, lastContactAtGameHours: next.player.gameHours } };
 }
 

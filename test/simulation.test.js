@@ -29,6 +29,12 @@ test('starter lead includes human-readable context', () => {
   assert.equal(state.lead.preferredContact, 'Phone');
 });
 
+test('contact method is recorded while preserving approved contact effects', () => {
+  const state = completeContact(convertOpportunity(qualifyOpportunity(createNewGame())), 'Text');
+  assert.equal(state.player.trust, 53);
+  assert.match(state.activities.at(-1).message, /text contact/);
+});
+
 test('invalid progression is blocked', () => {
   assert.throws(() => convertOpportunity(createNewGame()), /qualified first/);
 });
