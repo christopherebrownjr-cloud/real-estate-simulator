@@ -16,6 +16,13 @@ h1, h2, p { margin-top: 0; } h1 { margin-bottom: 0; font-size: clamp(1.7rem, 4vw
 .form input { background: #101a29; border: 1px solid #50627b; border-radius: 10px; color: #f5f7fb; font: inherit; padding: 13px 14px; }
 .form input:focus { border-color: #73d4c2; outline: 3px solid rgba(115, 212, 194, .2); }
 .entity-row { align-items: center; border-bottom: 1px solid #2d3d56; display: flex; gap: 16px; justify-content: space-between; padding: 15px 0; }
+.opportunity-card { align-items: center; background: #1c293d; border: 1px solid #3c526e; border-radius: 14px; color: #f5f7fb; cursor: pointer; display: flex; font: inherit; justify-content: space-between; padding: 18px; text-align: left; width: 100%; }
+.opportunity-card:hover, .opportunity-card:focus { border-color: #73d4c2; outline: 2px solid rgba(115, 212, 194, .2); }
+.opportunity-card small { color: #9eacc0; display: block; margin-top: 6px; }
+.detail-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 28px 0; }
+.detail-grid > div { background: #1c293d; border-radius: 12px; display: grid; gap: 6px; padding: 16px; }
+.label { color: #8fa0b6; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
+.mono { font-family: ui-monospace, SFMono-Regular, monospace; font-size: .78rem; overflow-wrap: anywhere; }
 .badge { background: #203b4b; border-radius: 999px; color: #9be9da; font-size: .8rem; padding: 6px 10px; }
 .subheading { border-top: 1px solid #2d3d56; margin-top: 30px; padding-top: 24px; }
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
@@ -30,4 +37,4 @@ h3 { font-size: 1.25rem; margin: 0 0 10px; }
 .welcome { padding: clamp(28px, 7vw, 72px); } .welcome > p:not(.eyebrow):not(.note) { color: #c2ccdb; font-size: 1.08rem; line-height: 1.65; max-width: 650px; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 30px 0 18px; } button { border: 0; border-radius: 10px; background: #73d4c2; color: #0d1b1d; cursor: not-allowed; font: inherit; font-weight: 800; padding: 13px 18px; } button.secondary { background: transparent; border: 1px solid #50627b; color: #d8e2f0; }
 .note { color: #8797ad; font-size: .9rem; margin-bottom: 0; }
-@media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .feedback { align-items: flex-start; flex-direction: column; gap: 12px; } }
+@media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .feedback { align-items: flex-start; flex-direction: column; gap: 12px; } .detail-grid { grid-template-columns: 1fr; } }
