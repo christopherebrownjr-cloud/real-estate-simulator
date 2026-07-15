@@ -22,6 +22,13 @@ test('first playable progression reaches an active deal', () => {
   assert.equal(state.player.trust, 61);
 });
 
+test('starter lead includes human-readable context', () => {
+  const state = convertOpportunity(qualifyOpportunity(createNewGame()));
+  assert.equal(state.lead.firstName, 'Jordan');
+  assert.equal(state.lead.type, 'Buyer');
+  assert.equal(state.lead.preferredContact, 'Phone');
+});
+
 test('invalid progression is blocked', () => {
   assert.throws(() => convertOpportunity(createNewGame()), /qualified first/);
 });

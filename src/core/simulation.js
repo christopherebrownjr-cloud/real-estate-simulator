@@ -30,7 +30,7 @@ export function qualifyOpportunity(state) {
 
 export function convertOpportunity(state) {
   if (state.opportunity.status !== 'Qualified') throw new Error('The opportunity must be qualified first.');
-  const lead = { id: id('lead'), status: 'New', trust: SIMULATION_CONFIG.startingTrust, score: 0 };
+  const lead = { id: id('lead'), firstName: 'Jordan', lastName: 'Miller', type: 'Buyer', motivation: 'Find a first home', budgetRange: '$350k–$425k', timeline: 'This season', preferredContact: 'Phone', concern: 'Worried about making the wrong choice', status: 'New', trust: SIMULATION_CONFIG.startingTrust, score: 0 };
   return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead };
 }
 
