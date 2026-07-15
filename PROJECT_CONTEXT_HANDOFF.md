@@ -11,7 +11,7 @@ This document is the durable handoff for continuing development in a new session
 - Repository: https://github.com/christopherebrownjr-cloud/real-estate-simulator
 - Live site: https://christopherebrownjr-cloud.github.io/real-estate-simulator/
 - Branch: `main`
-- Latest pushed commit: `ae3c005`
+- Latest pushed commit: `149d78f`
 - Hosting: GitHub Pages through `.github/workflows/deploy.yml`
 - Vite base path: `/real-estate-simulator/`
 - Deployment has been verified with HTTP 200 and working JS/CSS assets.
@@ -53,6 +53,7 @@ This document is the durable handoff for continuing development in a new session
 - Activity & Notifications.
 - Save / Load.
 - Responsive navigation, light design system, logo, score meters, keyboard focus, live status semantics.
+- Mobile bottom navigation and accessible status glyphs/pipeline stepper.
 
 ## Design integration status
 
@@ -102,6 +103,15 @@ The isolated Claude prototype must not be copied directly into the application. 
 7. Add loading, error, disabled, and validation states screen by screen.
 8. Re-run tests, production build, and Pages deployment.
 9. Prepare First Playable release notes.
+
+## Latest release verification
+
+- Automated tests: 7 passing.
+- Production build: passing with Vite 6.4.3.
+- Live page: HTTP 200.
+- Live JavaScript asset: HTTP 200.
+- Live CSS asset: HTTP 200.
+- Remaining release gate: manual browser smoke test, screen-reader review, and mobile visual review.
 
 ## Approval protocol
 
