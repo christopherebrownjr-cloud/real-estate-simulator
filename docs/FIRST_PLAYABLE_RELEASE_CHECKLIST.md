@@ -28,8 +28,9 @@
 - [x] Integrity checksum
 - [x] Tamper detection
 - [x] JSON export/import backup
-- [ ] Crash recovery save
-- [ ] Migration test across schema versions
+- [x] Crash recovery save
+- [x] Version-aware migration entry point
+- [ ] Migration fixture test across future schema versions
 
 ## Quality
 

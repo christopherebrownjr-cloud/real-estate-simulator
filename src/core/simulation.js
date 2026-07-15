@@ -1,6 +1,7 @@
 import { SIMULATION_CONFIG } from './config.js';
 
 const SAVE_KEY = 'new-realtor-simulator/save-v1';
+const RECOVERY_KEY = 'new-realtor-simulator/recovery-v1';
 
 const id = (prefix) => `${prefix}-${crypto.randomUUID()}`;
 
@@ -86,7 +87,8 @@ export function negotiateBrokerage(state, requestedShare) {
 
 function checksum(value) { let hash = 2166136261; for (const char of value) { hash ^= char.charCodeAt(0); hash = Math.imul(hash, 16777619); } return (hash >>> 0).toString(16); }
 export function serializeSave(state) { const payload = JSON.stringify({ schemaVersion: 1, state }); return JSON.stringify({ schemaVersion: 1, payload, checksum: checksum(payload) }); }
-export function deserializeSave(serialized) { const envelope = JSON.parse(serialized); if (!envelope?.payload || envelope.checksum !== checksum(envelope.payload)) throw new Error('Save data failed integrity validation.'); const parsed = JSON.parse(envelope.payload); if (parsed.schemaVersion !== 1) throw new Error('Save version is not supported.'); return parsed.state; }
-export function saveGame(state) { localStorage.setItem(SAVE_KEY, serializeSave(state)); return state; }
-export function loadGame() { const raw = localStorage.getItem(SAVE_KEY); if (!raw) return null; try { return deserializeSave(raw); } catch { localStorage.removeItem(SAVE_KEY); return null; } }
+export function deserializeSave(serialized) { const envelope = JSON.parse(serialized); if (!envelope?.payload || envelope.checksum !== checksum(envelope.payload)) throw new Error('Save data failed integrity validation.'); const parsed = JSON.parse(envelope.payload); if (parsed.schemaVersion === 1) return parsed.state; throw new Error('Save version is not supported.'); }
+export function saveGame(state) { const serialized = serializeSave(state); localStorage.setItem(RECOVERY_KEY, serialized); localStorage.setItem(SAVE_KEY, serialized); localStorage.removeItem(RECOVERY_KEY); return state; }
+export function loadGame() { const raw = localStorage.getItem(SAVE_KEY) ?? localStorage.getItem(RECOVERY_KEY); if (!raw) return null; try { return deserializeSave(raw); } catch { localStorage.removeItem(SAVE_KEY); localStorage.removeItem(RECOVERY_KEY); return null; } }
 export function getSaveKey() { return SAVE_KEY; }
+export function getRecoveryKey() { return RECOVERY_KEY; }
