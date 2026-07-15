@@ -10,10 +10,12 @@
 - Claude Design package reviewed; light visual foundation, logo, responsive direction, and score meters integrated.
 - Mobile bottom navigation, status glyphs, and dashboard pipeline stepper integrated.
 - First Playable production build and live asset checks pass.
+- Starter lead now has human context and first-contact method choices.
+- Guided consultation, client-conversion, and first-close milestone feedback added.
 
 ## Pending
 
 - Full browser smoke testing
 - Migration fixture test across future schema versions
 - Final accessibility and responsive review
-- Remaining Claude Design parity: glyphs, pipeline stepper, bottom mobile tabs, and complete state coverage
+- Remaining Claude Design parity: complete loading, error, disabled, and validation state coverage

@@ -39,6 +39,9 @@
 - [x] Navigation current-state semantics
 - [x] Visual design foundation integrated
 - [x] Mobile navigation and status glyphs integrated
+- [x] Human-readable starter lead profile
+- [x] First-contact method choices
+- [x] Guided consultation and milestone feedback
 - [ ] Screen-reader review
 - [ ] Full browser smoke test
 - [ ] Mobile layout review

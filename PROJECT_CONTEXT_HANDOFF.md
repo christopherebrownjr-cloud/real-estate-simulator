@@ -11,7 +11,7 @@ This document is the durable handoff for continuing development in a new session
 - Repository: https://github.com/christopherebrownjr-cloud/real-estate-simulator
 - Live site: https://christopherebrownjr-cloud.github.io/real-estate-simulator/
 - Branch: `main`
-- Latest pushed commit: `149d78f`
+- Latest pushed commit: `d6ddf9f`
 - Hosting: GitHub Pages through `.github/workflows/deploy.yml`
 - Vite base path: `/real-estate-simulator/`
 - Deployment has been verified with HTTP 200 and working JS/CSS assets.
@@ -54,6 +54,9 @@ This document is the durable handoff for continuing development in a new session
 - Save / Load.
 - Responsive navigation, light design system, logo, score meters, keyboard focus, live status semantics.
 - Mobile bottom navigation and accessible status glyphs/pipeline stepper.
+- Human-readable starter lead profile with buyer context, budget, timeline, contact preference, and concern.
+- Phone, text, and email first-contact choices with activity history.
+- Guided consultation context and client-conversion/first-close milestone feedback.
 
 ## Design integration status
 
