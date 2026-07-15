@@ -15,6 +15,10 @@ npm run dev
 
 The app is designed for static deployment to GitHub Pages. The production build is created with `npm run build`.
 
+## Simulator Studio
+
+Open `/real-estate-simulator/?studio=1` to inspect the current career loop, release gates, shipped systems, and deferred feature ideas. This review workspace is presentation-only and does not add gameplay rules.
+
 ## Governance
 
 - [Milestone 0 backlog](docs/MILESTONE_0_BACKLOG.md)
