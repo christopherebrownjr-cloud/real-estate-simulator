@@ -36,7 +36,7 @@ export function convertOpportunity(state) {
 export function completeContact(state) {
   if (!state.lead || !['New', 'Attempting Contact'].includes(state.lead.status)) throw new Error('The lead is not ready for contact.');
   const next = record(state, 'LeadContactCompleted', 'Successful contact completed.', SIMULATION_CONFIG.timeCosts.contact);
-  return { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.successfulContact) }, lead: { ...next.lead, status: 'Connected', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.successfulContact), score: 20 } };
+  return { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.successfulContact) }, lead: { ...next.lead, status: 'Connected', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.successfulContact), score: 20, lastContactAtGameHours: next.player.gameHours } };
 }
 
 export function completeAppointment(state) {
