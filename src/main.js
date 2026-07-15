@@ -34,9 +34,9 @@ function render() {
   document.querySelector('#app').innerHTML = `
     <section class="shell" aria-labelledby="game-title">
       <header class="topbar"><div><p class="eyebrow">CAREER SIMULATION</p><h1 id="game-title">New Realtor Simulator</h1></div><span class="status">First Playable</span></header>
-      <nav class="nav" aria-label="Primary navigation">${navItems.map(([key, label]) => `<button class="nav-button ${screen === key ? 'active' : ''}" data-screen="${key}">${label}</button>`).join('')}</nav>
-      <main>${screenContent()}</main>
-      <section class="card feedback" role="status"><strong>${message}</strong></section>
+      <nav class="nav" aria-label="Primary navigation">${navItems.map(([key, label]) => `<button type="button" class="nav-button ${screen === key ? 'active' : ''}" aria-current="${screen === key ? 'page' : 'false'}" data-screen="${key}">${label}</button>`).join('')}</nav>
+      <main id="main-content" tabindex="-1">${screenContent()}</main>
+      <section class="card feedback" role="status" aria-live="polite"><strong>${message}</strong></section>
     </section>`;
   document.querySelectorAll('[data-screen]').forEach((button) => button.addEventListener('click', () => { screen = button.dataset.screen; render(); }));
   document.querySelectorAll('[data-action]').forEach((button) => button.addEventListener('click', () => run(button.dataset.action)));
