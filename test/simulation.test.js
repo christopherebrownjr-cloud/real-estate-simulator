@@ -78,3 +78,17 @@ test('valid saves round-trip without changing state', () => {
   const restored = deserializeSave(serializeSave(original));
   assert.deepEqual(restored, original);
 });
+
+test('future schema fixture is rejected by the version gate', () => {
+  const envelope = JSON.parse(serializeSave(createNewGame('Future Schema Fixture')));
+  const futurePayload = JSON.stringify({ schemaVersion: 2, state: JSON.parse(envelope.payload).state });
+  envelope.payload = futurePayload;
+  envelope.checksum = checksumForTest(futurePayload);
+  assert.throws(() => deserializeSave(JSON.stringify(envelope)), /Save version is not supported/);
+});
+
+function checksumForTest(value) {
+  let hash = 2166136261;
+  for (const character of value) { hash ^= character.charCodeAt(0); hash = Math.imul(hash, 16777619); }
+  return (hash >>> 0).toString(16);
+}

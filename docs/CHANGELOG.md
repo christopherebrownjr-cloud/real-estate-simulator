@@ -12,10 +12,11 @@
 - First Playable production build and live asset checks pass.
 - Starter lead now has human context and first-contact method choices.
 - Guided consultation, client-conversion, and first-close milestone feedback added.
+- Future-schema save fixture now verifies the version gate rejects unsupported schema data.
 
 ## Pending
 
 - Full browser smoke testing
-- Migration fixture test across future schema versions
+- Final release verification includes the future-schema fixture test; live browser smoke testing remains pending.
 - Final accessibility and responsive review
 - Remaining Claude Design parity: complete loading, error, disabled, and validation state coverage

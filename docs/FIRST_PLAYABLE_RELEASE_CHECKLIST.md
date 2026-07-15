@@ -30,7 +30,7 @@
 - [x] JSON export/import backup
 - [x] Crash recovery save
 - [x] Version-aware migration entry point
-- [ ] Migration fixture test across future schema versions
+- [x] Migration fixture test across future schema versions
 
 ## Quality
 
