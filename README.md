@@ -22,6 +22,7 @@ The app is designed for static deployment to GitHub Pages. The production build 
 - [Subagent operating model](docs/SUBAGENT_OPERATING_MODEL.md)
 - [Subagent package](docs/SUBAGENT_PACKAGE.md)
 - [Screen and navigation plan](docs/SCREEN_NAVIGATION_PLAN.md)
+- [Project context handoff](PROJECT_CONTEXT_HANDOFF.md)
 - [Open product questions](docs/OPEN_PRODUCT_QUESTIONS.md)
 
 No gameplay rule is considered final until it is recorded in an approved source document.
