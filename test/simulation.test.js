@@ -51,3 +51,17 @@ test('save serialization detects tampering', () => {
   envelope.payload = envelope.payload.replace('Save Tester', 'Changed Name');
   assert.throws(() => deserializeSave(JSON.stringify(envelope)), /integrity validation/);
 });
+
+test('negotiated brokerage share is preserved through closing', () => {
+  const negotiated = negotiateBrokerage(playableState(), 0.85);
+  const closed = closeDeal(enterEscrow(activateDeal(createDeal(negotiated))));
+  assert.equal(closed.deal.playerShare, 0.85);
+  assert.equal(closed.ledger[0].amount, 10200);
+  assert.equal(closed.player.cashBalance, 10200);
+});
+
+test('valid saves round-trip without changing state', () => {
+  const original = playableState();
+  const restored = deserializeSave(serializeSave(original));
+  assert.deepEqual(restored, original);
+});
