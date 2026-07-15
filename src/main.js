@@ -47,6 +47,7 @@ function render() {
   document.querySelectorAll('[data-action]').forEach((button) => button.addEventListener('click', () => run(button.dataset.action)));
   document.querySelector('#save-file')?.addEventListener('change', (event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => { try { state = deserializeSave(String(reader.result)); saveGame(state); message = 'Backup imported and saved locally.'; screen = 'dashboard'; render(); } catch (error) { message = error.message; render(); } }; reader.readAsText(file); });
   document.querySelector('#new-game-form')?.addEventListener('submit', (event) => { event.preventDefault(); const displayName = new FormData(event.currentTarget).get('displayName').trim(); if (displayName.length < 2) { message = 'Display name must be at least 2 characters.'; render(); return; } state = createNewGame(displayName); saveGame(state); screen = 'dashboard'; message = 'New career started and saved locally.'; render(); });
+  document.querySelector('#main-content')?.focus({ preventScroll: true });
 }
 
 function run(name) {
