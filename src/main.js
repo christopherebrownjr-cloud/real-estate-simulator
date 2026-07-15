@@ -7,9 +7,10 @@ let screen = 'dashboard';
 
 const hours = () => `${Math.floor(state.player.gameHours / 8)}d ${state.player.gameHours % 8}h`;
 const action = (label, fn) => `<button data-action="${fn}">${label}</button>`;
-const navItems = [['dashboard', 'Dashboard'], ['opportunities', 'Opportunities'], ['leads', 'Leads'], ['appointments', 'Appointments & Tasks'], ['clients', 'Clients'], ['deals', 'Deals'], ['ledger', 'Financial Ledger'], ['activity', 'Activity & Notifications'], ['save', 'Save / Load']];
+const navItems = [['setup', 'New Game'], ['dashboard', 'Dashboard'], ['opportunities', 'Opportunities'], ['leads', 'Leads'], ['appointments', 'Appointments & Tasks'], ['clients', 'Clients'], ['deals', 'Deals'], ['ledger', 'Financial Ledger'], ['activity', 'Activity & Notifications'], ['save', 'Save / Load']];
 
 function screenContent() {
+  if (screen === 'setup') return `<section class="card page"><p class="eyebrow">CAREER SETUP</p><h2>Start a new career</h2><p>Choose a display name for your realtor career. The starter scenario will begin with a new opportunity and a clean local save state.</p><form id="new-game-form" class="form"><label for="display-name">Display name</label><input id="display-name" name="displayName" maxlength="40" minlength="2" value="${state.player.displayName}" required /><p class="note">Your game is single-player and saved locally in this browser.</p><button type="submit">Start new game</button></form></section>`;
   if (screen === 'dashboard') return `<section class="grid">
     <article class="card hero"><p class="eyebrow">CAREER DASHBOARD</p><h2>${state.player.displayName}</h2><p class="note">Starter scenario · ${hours()} elapsed</p><div class="metrics"><span><b>${state.player.trust}</b>Trust</span><span><b>${state.player.reputation}</b>Reputation</span><span><b>${state.lead?.score ?? '—'}</b>Lead score</span><span><b>$${(state.player.cashBalance ?? 0).toLocaleString()}</b>Cash</span></div></article>
     <article class="card"><p class="eyebrow">TODAY</p><h3>Next recommended action</h3><p>${state.lead ? `Continue the lead: ${state.lead.status}.` : 'Review and qualify your starter opportunity.'}</p><button data-screen="${state.lead ? 'leads' : 'opportunities'}">Open workspace</button></article>
@@ -35,6 +36,7 @@ function render() {
     </section>`;
   document.querySelectorAll('[data-screen]').forEach((button) => button.addEventListener('click', () => { screen = button.dataset.screen; render(); }));
   document.querySelectorAll('[data-action]').forEach((button) => button.addEventListener('click', () => run(button.dataset.action)));
+  document.querySelector('#new-game-form')?.addEventListener('submit', (event) => { event.preventDefault(); const displayName = new FormData(event.currentTarget).get('displayName').trim(); if (displayName.length < 2) { message = 'Display name must be at least 2 characters.'; render(); return; } state = createNewGame(displayName); saveGame(state); screen = 'dashboard'; message = 'New career started and saved locally.'; render(); });
 }
 
 function run(name) {

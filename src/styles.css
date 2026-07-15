@@ -11,6 +11,10 @@ h1, h2, p { margin-top: 0; } h1 { margin-bottom: 0; font-size: clamp(1.7rem, 4vw
 .nav-button { background: transparent; border: 1px solid #2d3d56; color: #aebbd0; cursor: pointer; font-size: .82rem; padding: 10px 12px; white-space: nowrap; }
 .nav-button.active { background: #73d4c2; border-color: #73d4c2; color: #0d1b1d; }
 .page { min-height: 360px; padding: clamp(24px, 5vw, 48px); }
+.form { display: grid; gap: 10px; max-width: 440px; margin-top: 28px; }
+.form label { color: #c2ccdb; font-size: .9rem; font-weight: 700; }
+.form input { background: #101a29; border: 1px solid #50627b; border-radius: 10px; color: #f5f7fb; font: inherit; padding: 13px 14px; }
+.form input:focus { border-color: #73d4c2; outline: 3px solid rgba(115, 212, 194, .2); }
 .entity-row { align-items: center; border-bottom: 1px solid #2d3d56; display: flex; gap: 16px; justify-content: space-between; padding: 15px 0; }
 .badge { background: #203b4b; border-radius: 999px; color: #9be9da; font-size: .8rem; padding: 6px 10px; }
 .subheading { border-top: 1px solid #2d3d56; margin-top: 30px; padding-top: 24px; }
