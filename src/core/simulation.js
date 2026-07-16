@@ -8,19 +8,27 @@ const id = (prefix) => `${prefix}-${crypto.randomUUID()}`;
 export function createNewGame(displayName = 'New Realtor') {
   return {
     version: 1,
-    player: { id: id('player'), displayName, trust: SIMULATION_CONFIG.startingTrust, reputation: SIMULATION_CONFIG.startingReputation, gameHours: 0, brokerageContract: { playerShare: SIMULATION_CONFIG.commission.defaultPlayerShare, negotiated: false } },
+    player: { id: id('player'), displayName, trust: SIMULATION_CONFIG.startingTrust, reputation: SIMULATION_CONFIG.startingReputation, gameHours: 0, dayIndex: 0, brokerageContract: { playerShare: SIMULATION_CONFIG.commission.defaultPlayerShare, negotiated: false } },
     opportunity: { id: id('opportunity'), status: 'Discovered', source: 'Starter Scenario', type: 'Residential', convertedLeadId: null },
     lead: null,
+    leads: [],
     client: null,
     deal: null,
     ledger: [],
     activities: [],
     notifications: [{ id: id('notification'), message: 'A new opportunity is waiting.', read: false }],
+    tasks: [],
   };
 }
 
-function record(state, type, message, hours = 0) {
-  return { ...state, player: { ...state.player, gameHours: state.player.gameHours + hours }, activities: [...state.activities, { id: id('activity'), type, message, gameHours: state.player.gameHours + hours }] };
+function record(state, type, message, hours = 0, relatedLeadId = null) {
+  const gameHours = state.player.gameHours + hours;
+  return { ...state, player: { ...state.player, gameHours }, activities: [...state.activities, { id: id('activity'), type, message, gameHours, dayIndex: state.player.dayIndex, relatedLeadId }] };
+}
+
+function withLeadActivity(state, lead, type, message) {
+  const entry = { id: id('lead-activity'), type, message, dayIndex: state.player.dayIndex, gameHours: state.player.gameHours };
+  return { ...state, lead: { ...lead, activity: [...(lead.activity ?? []), entry] } };
 }
 
 export function qualifyOpportunity(state) {
@@ -31,25 +39,34 @@ export function qualifyOpportunity(state) {
 export function convertOpportunity(state) {
   if (state.opportunity.status !== 'Qualified') throw new Error('The opportunity must be qualified first.');
   const lead = { id: id('lead'), firstName: 'Jordan', lastName: 'Miller', type: 'Buyer', motivation: 'Find a first home', budgetRange: '$350k–$425k', timeline: 'This season', preferredContact: 'Phone', concern: 'Worried about making the wrong choice', status: 'New', trust: SIMULATION_CONFIG.startingTrust, score: 0 };
-  return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead };
+  return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead: { ...lead, activity: [{ id: id('lead-activity'), type: 'LeadCreated', message: 'Lead created from the starter opportunity.', dayIndex: state.player.dayIndex, gameHours: state.player.gameHours }] }, leads: [{ ...lead, activity: [{ id: id('lead-activity'), type: 'LeadCreated', message: 'Lead created from the starter opportunity.', dayIndex: state.player.dayIndex, gameHours: state.player.gameHours }] }], tasks: [{ id: id('task'), type: 'ContactLead', title: 'Make first contact with Jordan Miller', dueDay: state.player.dayIndex, status: 'Open', relatedLeadId: lead.id }] };
 }
 
 export function completeContact(state, method = 'Phone') {
   if (!state.lead || !['New', 'Attempting Contact'].includes(state.lead.status)) throw new Error('The lead is not ready for contact.');
-  const next = record(state, 'LeadContactCompleted', `Successful ${method.toLowerCase()} contact completed.`, SIMULATION_CONFIG.timeCosts.contact);
-  return { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.successfulContact) }, lead: { ...next.lead, status: 'Connected', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.successfulContact), score: 20, lastContactAtGameHours: next.player.gameHours } };
+  const next = record(state, 'LeadContactCompleted', `Successful ${method.toLowerCase()} contact completed.`, SIMULATION_CONFIG.timeCosts.contact, state.lead.id);
+  const updated = { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.successfulContact) }, lead: { ...next.lead, status: 'Connected', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.successfulContact), score: 20, lastContactAtGameHours: next.player.gameHours } };
+  return withLeadActivity(updated, updated.lead, 'Contact', `Successful ${method.toLowerCase()} contact completed.`);
 }
 
 export function completeAppointment(state) {
   if (!state.lead || state.lead.status !== 'Connected') throw new Error('Successful contact is required before the appointment.');
-  const next = record(state, 'AppointmentCompleted', 'Appointment completed.', SIMULATION_CONFIG.timeCosts.appointment);
-  return { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.completedAppointment) }, lead: { ...next.lead, status: 'Appointment Scheduled', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.completedAppointment), score: 40 } };
+  const next = record(state, 'AppointmentCompleted', 'Appointment completed.', SIMULATION_CONFIG.timeCosts.appointment, state.lead.id);
+  const updated = { ...next, player: { ...next.player, trust: Math.min(100, next.player.trust + SIMULATION_CONFIG.trust.completedAppointment) }, lead: { ...next.lead, status: 'Appointment Scheduled', trust: Math.min(100, next.lead.trust + SIMULATION_CONFIG.trust.completedAppointment), score: 40 } };
+  return withLeadActivity(updated, updated.lead, 'Appointment', 'Appointment completed.');
 }
 
 export function convertToClient(state) {
   if (!state.lead || state.lead.status !== 'Appointment Scheduled') throw new Error('A completed appointment is required before client conversion.');
-  const client = { id: id('client'), originatingLeadId: state.lead.id, status: 'Active', trust: state.lead.trust };
-  return { ...state, lead: { ...state.lead, status: 'Client' }, client };
+  const client = { id: id('client'), originatingLeadId: state.lead.id, status: 'Active', trust: state.lead.trust, firstName: state.lead.firstName, lastName: state.lead.lastName, profile: { type: state.lead.type, motivation: state.lead.motivation, budgetRange: state.lead.budgetRange, timeline: state.lead.timeline } };
+  const updated = { ...state, lead: { ...state.lead, status: 'Client' }, client, tasks: (state.tasks ?? []).map((task) => task.relatedLeadId === state.lead.id ? { ...task, status: 'Completed' } : task) };
+  return withLeadActivity(updated, updated.lead, 'ClientConversion', 'Relationship converted to an active client.');
+}
+
+export function advanceDay(state) {
+  const dayIndex = (state.player.dayIndex ?? 0) + 1;
+  const next = { ...state, player: { ...state.player, dayIndex, gameHours: state.player.gameHours + 8 }, activities: [...state.activities, { id: id('activity'), type: 'DayAdvanced', message: `Advanced to day ${dayIndex}.`, gameHours: state.player.gameHours + 8, dayIndex, relatedLeadId: null }] };
+  return { ...next, tasks: (next.tasks ?? []).map((task) => task.status === 'Open' && task.dueDay < dayIndex ? { ...task, status: 'Overdue' } : task) };
 }
 
 export function createDeal(state) {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activateDeal, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, serializeSave } from '../src/core/simulation.js';
+import { activateDeal, advanceDay, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, serializeSave } from '../src/core/simulation.js';
 
 function playableState() {
   let state = createNewGame('Test Realtor');
@@ -85,6 +85,24 @@ test('future schema fixture is rejected by the version gate', () => {
   envelope.payload = futurePayload;
   envelope.checksum = checksumForTest(futurePayload);
   assert.throws(() => deserializeSave(JSON.stringify(envelope)), /Save version is not supported/);
+});
+
+test('lead profile keeps an activity timeline and follow-up task', () => {
+  const state = convertOpportunity(qualifyOpportunity(createNewGame()));
+  assert.equal(state.leads.length, 1);
+  assert.equal(state.lead.activity[0].type, 'LeadCreated');
+  assert.equal(state.tasks[0].status, 'Open');
+  const contacted = completeContact(state, 'Email');
+  assert.equal(contacted.lead.activity.at(-1).type, 'Contact');
+  assert.equal(contacted.activities.at(-1).relatedLeadId, contacted.lead.id);
+});
+
+test('advance day increments the calendar and marks overdue tasks', () => {
+  const state = convertOpportunity(qualifyOpportunity(createNewGame()));
+  const advanced = advanceDay(state);
+  assert.equal(advanced.player.dayIndex, 1);
+  assert.equal(advanced.player.gameHours, 8);
+  assert.equal(advanced.tasks[0].status, 'Overdue');
 });
 
 function checksumForTest(value) {

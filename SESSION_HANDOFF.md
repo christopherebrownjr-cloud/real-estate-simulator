@@ -15,19 +15,20 @@ Implemented: setup, dashboard, recommended next action, First-Day Journey, oppor
 
 ## Verification
 
-- 9 automated tests pass.
+- 12 automated tests pass.
 - Production build passes.
 - GitHub Pages deployment and live JS/CSS assets were previously verified HTTP 200.
 
 ## Immediate next work
 
-1. Manual browser smoke test at the live URL.
+1. Manual browser smoke test at the live URL, including Advance Day and lead activity history.
 2. Mobile review at 320px and 390px widths.
 3. Screen-reader/accessibility review.
-4. Future-schema migration fixture test (added locally; verify in release run).
-5. Finish Claude Design parity: complete loading/error/disabled states and visual polish.
-6. Re-run tests, production build, and Pages deployment.
-7. Decide First Playable release-candidate approval.
+4. Future-schema migration fixture test (verified locally).
+5. Continue CRM Expansion: multiple lead records, filters, follow-up workspace, Gmail-style inbox, and multi-deal workspace.
+6. Finish Claude Design parity: complete loading/error/disabled states and visual polish.
+7. Re-run tests, production build, and Pages deployment.
+8. Decide First Playable release-candidate approval.
 
 ## Scope guard
 
