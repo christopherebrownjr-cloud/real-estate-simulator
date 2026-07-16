@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activateDeal, advanceDay, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, serializeSave } from '../src/core/simulation.js';
+import { activateDeal, advanceDay, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, selectLead, serializeSave } from '../src/core/simulation.js';
 
 function playableState() {
   let state = createNewGame('Test Realtor');
@@ -89,7 +89,7 @@ test('future schema fixture is rejected by the version gate', () => {
 
 test('lead profile keeps an activity timeline and follow-up task', () => {
   const state = convertOpportunity(qualifyOpportunity(createNewGame()));
-  assert.equal(state.leads.length, 1);
+  assert.equal(state.leads.length, 3);
   assert.equal(state.lead.activity[0].type, 'LeadCreated');
   assert.equal(state.tasks[0].status, 'Open');
   const contacted = completeContact(state, 'Email');
@@ -103,6 +103,14 @@ test('advance day increments the calendar and marks overdue tasks', () => {
   assert.equal(advanced.player.dayIndex, 1);
   assert.equal(advanced.player.gameHours, 8);
   assert.equal(advanced.tasks[0].status, 'Overdue');
+});
+
+test('new career includes selectable CRM lead profiles', () => {
+  const state = createNewGame();
+  assert.equal(state.leads.length, 2);
+  const selected = selectLead(state, state.leads[0].id);
+  assert.equal(selected.lead.firstName, 'Avery');
+  assert.equal(selected.lead.type, 'Seller');
 });
 
 function checksumForTest(value) {

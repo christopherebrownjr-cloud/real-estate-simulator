@@ -5,13 +5,17 @@ const RECOVERY_KEY = 'new-realtor-simulator/recovery-v1';
 
 const id = (prefix) => `${prefix}-${crypto.randomUUID()}`;
 
+function starterProfile(firstName, lastName, type, motivation, budgetRange, timeline, preferredContact, concern) {
+  return { id: id('lead'), firstName, lastName, type, motivation, budgetRange, timeline, preferredContact, concern, status: 'New', trust: SIMULATION_CONFIG.startingTrust, score: 0, activity: [] };
+}
+
 export function createNewGame(displayName = 'New Realtor') {
   return {
     version: 1,
     player: { id: id('player'), displayName, trust: SIMULATION_CONFIG.startingTrust, reputation: SIMULATION_CONFIG.startingReputation, gameHours: 0, dayIndex: 0, brokerageContract: { playerShare: SIMULATION_CONFIG.commission.defaultPlayerShare, negotiated: false } },
     opportunity: { id: id('opportunity'), status: 'Discovered', source: 'Starter Scenario', type: 'Residential', convertedLeadId: null },
     lead: null,
-    leads: [],
+    leads: [starterProfile('Avery', 'Chen', 'Seller', 'Prepare for a move', '$525k–$600k value', 'This quarter', 'Email', 'Unsure where to start with timing'), starterProfile('Marcus', 'Reed', 'Investor', 'Evaluate a rental property', '$450k–$700k budget', 'Next six months', 'Text', 'Needs a clear return profile')],
     client: null,
     deal: null,
     ledger: [],
@@ -28,7 +32,8 @@ function record(state, type, message, hours = 0, relatedLeadId = null) {
 
 function withLeadActivity(state, lead, type, message) {
   const entry = { id: id('lead-activity'), type, message, dayIndex: state.player.dayIndex, gameHours: state.player.gameHours };
-  return { ...state, lead: { ...lead, activity: [...(lead.activity ?? []), entry] } };
+  const updatedLead = { ...lead, activity: [...(lead.activity ?? []), entry] };
+  return { ...state, lead: updatedLead, leads: (state.leads ?? []).map((item) => item.id === updatedLead.id ? updatedLead : item) };
 }
 
 export function qualifyOpportunity(state) {
@@ -36,10 +41,17 @@ export function qualifyOpportunity(state) {
   return { ...state, opportunity: { ...state.opportunity, status: 'Qualified' } };
 }
 
+export function selectLead(state, leadId) {
+  const selected = (state.leads ?? []).find((lead) => lead.id === leadId);
+  if (!selected) throw new Error('Lead record was not found.');
+  return { ...state, lead: selected };
+}
+
 export function convertOpportunity(state) {
   if (state.opportunity.status !== 'Qualified') throw new Error('The opportunity must be qualified first.');
   const lead = { id: id('lead'), firstName: 'Jordan', lastName: 'Miller', type: 'Buyer', motivation: 'Find a first home', budgetRange: '$350k–$425k', timeline: 'This season', preferredContact: 'Phone', concern: 'Worried about making the wrong choice', status: 'New', trust: SIMULATION_CONFIG.startingTrust, score: 0 };
-  return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead: { ...lead, activity: [{ id: id('lead-activity'), type: 'LeadCreated', message: 'Lead created from the starter opportunity.', dayIndex: state.player.dayIndex, gameHours: state.player.gameHours }] }, leads: [{ ...lead, activity: [{ id: id('lead-activity'), type: 'LeadCreated', message: 'Lead created from the starter opportunity.', dayIndex: state.player.dayIndex, gameHours: state.player.gameHours }] }], tasks: [{ id: id('task'), type: 'ContactLead', title: 'Make first contact with Jordan Miller', dueDay: state.player.dayIndex, status: 'Open', relatedLeadId: lead.id }] };
+  const created = { ...lead, activity: [{ id: id('lead-activity'), type: 'LeadCreated', message: 'Lead created from the starter opportunity.', dayIndex: state.player.dayIndex, gameHours: state.player.gameHours }] };
+  return { ...state, opportunity: { ...state.opportunity, status: 'Won', convertedLeadId: lead.id }, lead: created, leads: [...(state.leads ?? []), created], tasks: [{ id: id('task'), type: 'ContactLead', title: 'Make first contact with Jordan Miller', dueDay: state.player.dayIndex, status: 'Open', relatedLeadId: lead.id }] };
 }
 
 export function completeContact(state, method = 'Phone') {
