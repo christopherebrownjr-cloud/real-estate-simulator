@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activateDeal, advanceDay, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, negotiateBrokerage, qualifyOpportunity, selectLead, serializeSave } from '../src/core/simulation.js';
+import { createMemoryStorageAdapter } from '../src/core/storage.js';
+import { activateDeal, advanceDay, closeDeal, completeAppointment, completeContact, convertOpportunity, convertToClient, createDeal, createNewGame, deserializeSave, enterEscrow, loadGame, negotiateBrokerage, qualifyOpportunity, saveGame, selectLead, serializeSave } from '../src/core/simulation.js';
 
 function playableState() {
   let state = createNewGame('Test Realtor');
@@ -118,3 +119,17 @@ function checksumForTest(value) {
   for (const character of value) { hash ^= character.charCodeAt(0); hash = Math.imul(hash, 16777619); }
   return (hash >>> 0).toString(16);
 }
+
+
+test('storage adapter saves and restores without browser globals', () => {
+  const adapter = createMemoryStorageAdapter();
+  const original = playableState();
+  saveGame(original, adapter);
+  assert.deepEqual(loadGame(adapter), original);
+});
+
+test('invalid adapter save is cleared safely', () => {
+  const adapter = createMemoryStorageAdapter('not-json');
+  assert.equal(loadGame(adapter), null);
+  assert.equal(adapter.read(), null);
+});
